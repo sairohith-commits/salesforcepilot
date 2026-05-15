@@ -3,7 +3,7 @@
    Frontend application logic
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const API_BASE   = 'http://localhost:8000';
+const API_BASE = window.location.origin;   
 const PER_PAGE   = 10;
 const MAX_HISTORY = 10;
 
