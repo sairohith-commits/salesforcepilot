@@ -40,16 +40,16 @@ TOOL_PIPELINE_BY_STAGE = {
 # ── Query functions ───────────────────────────────────────────────────────────
 
 def query_group_bookings_at_risk() -> list[dict]:
-    """Open opportunities with no activity in 30+ days, value > $50K, sorted by staleness."""
+    """Open opportunities closing within 90 days, value > $50K, sorted by close date."""
     soql = """
         SELECT Id, Name, Amount, StageName,
                CloseDate, LastActivityDate, Account.Name,
                Owner.Name
         FROM Opportunity
         WHERE StageName NOT IN ('Closed Won', 'Closed Lost')
-          AND LastActivityDate < LAST_N_DAYS:30
           AND Amount > 50000
-        ORDER BY LastActivityDate ASC
+          AND CloseDate <= NEXT_N_DAYS:90
+        ORDER BY CloseDate ASC
         LIMIT 20
     """
     return execute_soql(soql)

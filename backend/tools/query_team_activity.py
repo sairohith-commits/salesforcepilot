@@ -24,13 +24,13 @@ TOOL_RECENT_ACTIVITIES = {
 # ── Query function ────────────────────────────────────────────────────────────
 
 def query_recent_activities() -> list[dict]:
-    """Activities logged in the last 7 days, most recent first."""
+    """Tasks logged in the last 30 days, most recent first."""
     soql = """
         SELECT Id, Subject, ActivityDate,
                Type, Owner.Name,
-               What.Name
-        FROM Activity
-        WHERE ActivityDate = LAST_N_DAYS:7
+               Account.Name
+        FROM Task
+        WHERE ActivityDate = LAST_N_DAYS:30
         ORDER BY ActivityDate DESC
         LIMIT 20
     """
