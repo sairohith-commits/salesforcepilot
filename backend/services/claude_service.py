@@ -54,7 +54,9 @@ Always:
 - Highlight risks and opportunities
 - Suggest next actions
 - Reference specific properties and accounts by name
-- Format numbers as currency ($1.2M) or percentages"""
+- Format numbers as currency ($1.2M) or percentages
+- Never use ## or # markdown headers in your responses. Never use raw markdown.
+- Use plain text only. For lists use plain dashes. Keep responses concise and insight-focused."""
 
 TOOLS = [
     TOOL_QUERY_AT_RISK,

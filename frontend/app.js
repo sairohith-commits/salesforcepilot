@@ -23,7 +23,7 @@ const inputEl       = document.getElementById('userInput');
 const sendBtn       = document.getElementById('sendBtn');
 const historyEl     = document.getElementById('historyList');
 const clearHistBtn  = document.getElementById('clearHistoryBtn');
-const chipContainer = document.getElementById('suggestionChips');
+const chipContainer = document.getElementById('suggested-prompts');
 
 /* ─── Init ─────────────────────────────────────────────────────────────────── */
 window.addEventListener('DOMContentLoaded', () => {
@@ -69,6 +69,7 @@ async function sendMessage() {
   inputEl.style.height = 'auto';
   setSending(true);
 
+  document.getElementById('suggested-prompts').style.display = 'none';
   appendUserBubble(question);
   saveToHistory(question);
   const loadingEl = appendLoadingBubble();
@@ -126,20 +127,28 @@ function renderResponse(data, question) {
   wrap.className = 'agent-message';
 
   const bubble = document.createElement('div');
-  bubble.className = 'agent-bubble';
+  bubble.className = 'agent-bubble ai-message';
+
+  /* ── Avatar ── */
+  const avatarEl = document.createElement('div');
+  avatarEl.className = 'ai-avatar';
+  avatarEl.textContent = 'SF';
+  bubble.appendChild(avatarEl);
 
   /* ── 1. Summary ── */
   const summaryEl = document.createElement('div');
-  summaryEl.className = 'summary-text';
-  summaryEl.innerHTML = formatSummary(summary);
+  summaryEl.className = 'summary-text message-content';
+  summaryEl.innerHTML = formatResponse(summary);
   bubble.appendChild(summaryEl);
 
   /* ── 2. Metric cards ── */
-  const metricsEl = buildMetricCards(allRows, columns);
-  bubble.appendChild(metricsEl);
+  if (allRows.length > 0) {
+    const metricsEl = buildMetricCards(allRows, columns);
+    bubble.appendChild(metricsEl);
+  }
 
   /* ── 3. Chart ── */
-  const showChart = data.chart_data && data.chart_data.type !== 'table'
+  const showChart = allRows.length > 0 && data.chart_data && data.chart_data.type !== 'table'
                     && data.chart_data.labels && data.chart_data.labels.length > 0;
   let canvasEl = null;
   if (showChart) {
@@ -797,7 +806,7 @@ function appendUserBubble(text) {
 function appendLoadingBubble() {
   const el = document.createElement('div');
   el.className = 'loading-bubble';
-  el.innerHTML = '<div class="spinner"></div><span class="loading-text">Thinking…</span>';
+  el.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
   messagesEl.appendChild(el);
   return el;
 }
@@ -833,7 +842,7 @@ function setSending(on) {
 
 function scrollBottom() {
   requestAnimationFrame(() => {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: 'smooth' });
   });
 }
 
@@ -952,6 +961,16 @@ function formatSummary(text) {
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>')
     .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function formatResponse(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^- (.+)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/^/, '<p>')
+    .replace(/$/, '</p>');
 }
 
 /* Page range helper — e.g. [1, '…', 4, 5, 6, '…', 10] */
