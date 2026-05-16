@@ -37,6 +37,8 @@ class ChatResponse(BaseModel):
     chart_type: str
     chart_data: ChartData
     query_time_ms: int
+    tool_used: bool
+    record_count: int
 
 
 @router.post("/chat", response_model=ChatResponse)

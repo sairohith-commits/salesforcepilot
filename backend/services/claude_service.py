@@ -4,6 +4,7 @@ import json
 import os
 import time
 from datetime import date, datetime
+from pathlib import Path
 
 import anthropic
 from dotenv import load_dotenv
@@ -31,7 +32,7 @@ from tools.query_team_activity import (
     query_recent_activities,
 )
 
-load_dotenv()
+load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 
 # ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -236,4 +237,6 @@ def ask_agent(question: str) -> dict:
         "chart_type":    _CHART_HINTS.get(last_tool_name, "table"),
         "chart_data":    _build_chart_data(last_tool_name, last_rows),
         "query_time_ms": query_time_ms,
+        "tool_used":     bool(last_tool_name),
+        "record_count":  len(last_rows),
     }

@@ -51,7 +51,7 @@ function wireInput() {
 function wireChips() {
   chipContainer.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      inputEl.value = chip.dataset.query;
+      inputEl.value = chip.textContent.trim();
       inputEl.dispatchEvent(new Event('input'));
       sendMessage();
     });
@@ -142,7 +142,7 @@ function renderResponse(data, question) {
   bubble.appendChild(summaryEl);
 
   /* ── 2. Metric cards ── */
-  if (allRows.length > 0) {
+  if (data.record_count && data.record_count > 0) {
     const metricsEl = buildMetricCards(allRows, columns);
     bubble.appendChild(metricsEl);
   }
@@ -271,7 +271,8 @@ function renderResponse(data, question) {
 
   if (allRows.length > 0) {
     bubble.appendChild(tableSection);
-  } else {
+  } else if (data.tool_used) {
+    /* Only show "no records" when a tool was actually called but returned nothing */
     const noData = document.createElement('div');
     noData.className = 'no-data';
     noData.innerHTML = `
@@ -772,6 +773,7 @@ function renderHistory() {
 function clearHistory() {
   if (!confirm('Clear all query history?')) return;
   localStorage.removeItem('sp_history');
+  historyEl.innerHTML = '';   /* immediately blank the sidebar list */
   renderHistory();
 }
 

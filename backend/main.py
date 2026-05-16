@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from routes.chat import router as chat_router
 
-load_dotenv()
+load_dotenv(Path(__file__).parent / ".env", override=True)
 
 app = FastAPI(
     title="SalesforcePilot",

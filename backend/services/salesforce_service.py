@@ -6,7 +6,8 @@ from typing import Any
 from dotenv import load_dotenv
 from simple_salesforce import Salesforce, SalesforceAuthenticationFailed, SalesforceExpiredSession
 
-load_dotenv()
+from pathlib import Path as _Path
+load_dotenv(_Path(__file__).parent.parent / ".env", override=True)
 
 _sf: Salesforce | None = None
 
