@@ -51,7 +51,7 @@ function wireInput() {
 function wireChips() {
   chipContainer.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      inputEl.value = chip.textContent.trim();
+      inputEl.value = chip.dataset.query || chip.textContent.trim();
       inputEl.dispatchEvent(new Event('input'));
       sendMessage();
     });
@@ -582,11 +582,7 @@ function computeMetrics(rows, columns) {
   }
 
   /* Fallback */
-  return [
-    { label: 'Records Found', value: rows.length.toLocaleString() },
-    { label: 'Columns',       value: columns.length.toString()    },
-    { label: 'Status',        value: 'Complete'                   },
-  ];
+  return [];
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -771,9 +767,8 @@ function renderHistory() {
 }
 
 function clearHistory() {
-  if (!confirm('Clear all query history?')) return;
   localStorage.removeItem('sp_history');
-  historyEl.innerHTML = '';   /* immediately blank the sidebar list */
+  historyEl.innerHTML = '';
   renderHistory();
 }
 
